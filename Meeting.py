@@ -12,6 +12,8 @@ from webdriver_manager.utils import ChromeType
 from win32api import GetSystemMetrics
 
 
+#  The purpose of this class was a 12 line class so that we could have both Blackboard and Teams meetings in the same list, order them by start date, then call start_meeting()
+#  However, since all of the meetings inherit from it, making it a shared general purpose selenium class seemed to make sense
 class Meeting(ABC):
 
     def __init__(self, start_time: datetime, duration: float):
@@ -48,7 +50,7 @@ class Meeting(ABC):
         pass
 
     @staticmethod
-    def __initialize_chrome(start_url: string):
+    def initialize_chrome(start_url: string):
 
         # Chrome because Firefox gives me issues with audio in teams apparently? Bruh
         chrome_options = webdriver.ChromeOptions()
@@ -65,7 +67,7 @@ class Meeting(ABC):
         # Return the webdriver
         return chrome
 
-    def __wait_until_found(self, element: string, timeout: float):
+    def wait_until_found(self, element: string, timeout: float):
 
         # A utility method for selenium to wait for logins / page loads etc.
         try:
@@ -77,10 +79,23 @@ class Meeting(ABC):
             print(f"Timeout waiting for element: {element}")
             return None
 
-    def __input_keys_in_field_of_type(self, keys: string, field_type: string):
-        field = self.__wait_until_found(f"input[type= '{field_type}']", 30)
+    def input_keys_in_field_of_type(self, keys: string, field_type: string):
+        field = self.wait_until_found(f"input[type= '{field_type}']", 30)
         if field is not None:
             field.send_keys(keys)
             time.sleep(1)
         else:
             raise ValueError(f"The field {field_type} wasn't found")
+
+    def click_if_exists(self, selector: string, wait):
+        element = self.wait_until_found(selector, wait)
+        if element is not None:
+            element.click()
+
+    @staticmethod
+    def find_correct_element(array, attribute_to_get: string ,name_to_find: string):
+        for element in array:
+            if name_to_find.lower() in element.get_attribute(attribute_to_get).lower():
+                element.click()
+                return element
+        raise ValueError(f"Couldn't find the element {name_to_find}!")
