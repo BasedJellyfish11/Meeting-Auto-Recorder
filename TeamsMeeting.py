@@ -71,6 +71,10 @@ class TeamsMeeting(Meeting):
     def __disable_camera(self):
         self.__toggle_button("#preJoinAudioButton > div > button")
 
+    def __hangup(self):
+        self.click_if_exists("#hangup-button", 5)
+        time.sleep(5)
+
     def start_meeting(self):
         self.__login()
         self.__find_channel(self.__find_team(self.teamName), self.channelName)
@@ -80,6 +84,7 @@ class TeamsMeeting(Meeting):
         self.__join_meeting()
 
     def end_meeting(self):
+        self.__hangup()
         self.chrome.quit()
 
     def __toggle_button(self, selector: string):
