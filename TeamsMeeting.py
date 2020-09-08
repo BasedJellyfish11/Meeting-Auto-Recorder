@@ -69,7 +69,7 @@ class TeamsMeeting(Meeting):
         self.__toggle_button("#preJoinAudioButton > div > button")
 
     def __disable_camera(self):
-        self.__toggle_button("#preJoinAudioButton > div > button")
+        self.__toggle_button("toggle-button[data-tid='toggle-video']>div>button")
 
     def __hangup(self):
         self.click_if_exists("#hangup-button", 5)
@@ -88,8 +88,8 @@ class TeamsMeeting(Meeting):
         self.chrome.quit()
 
     def __toggle_button(self, selector: string):
-        button = self.wait_until_found(selector, 60)
-        if button.get_attribute("aria-pressed") == "true":
+        button = self.wait_until_found(selector, 15)
+        if button is not None and button.get_attribute("aria-pressed") == "true":
             button.click()
 
 
