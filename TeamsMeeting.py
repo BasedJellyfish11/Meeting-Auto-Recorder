@@ -1,21 +1,9 @@
 import string
 from selenium.common.exceptions import NoSuchElementException
 from Meeting import Meeting
-import json
-import random
-import re
 import time
 from datetime import datetime
-from threading import Timer
-
-from selenium import webdriver
-from selenium.common import exceptions
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.utils import ChromeType
 
 
 # Most of this is taken from or inspired by https://github.com/TobiasPankner/Teams-Auto-Joiner , forcing this project to be GPL-3
@@ -71,11 +59,32 @@ class TeamsMeeting(Meeting):
         # Return and click the good one
         return self.find_correct_element(channels, "data-tid", channel_name)
 
+    def __join_call_preliminary(self):
+        self.click_if_exists("button[ng-click='ctrl.joinCall()']", self.duration * 60 * 60)
+
+    def __join_meeting(self):
+        self.click_if_exists("button[ng-click='ctrl.joinMeeting()']", self.duration * 60 * 60)
+
+    def __mute_mic(self):
+        self.__toggle_button("#preJoinAudioButton > div > button")
+
+    def __disable_camera(self):
+        self.__toggle_button("#preJoinAudioButton > div > button")
+
     def start_meeting(self):
         self.__login()
         self.__find_channel(self.__find_team(self.teamName), self.channelName)
+        self.__join_call_preliminary()  # This leads to the preliminary screen rather than the actual meeting on first press
+        self.__mute_mic()
+        self.__disable_camera()
+        self.__join_meeting()
 
     def end_meeting(self):
         self.chrome.quit()
+
+    def __toggle_button(self, selector: string):
+        button = self.wait_until_found(selector, 60)
+        if button.get_attribute("aria-pressed") == "true":
+            button.click()
 
 

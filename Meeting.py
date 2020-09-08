@@ -57,6 +57,7 @@ class Meeting(ABC):
         chrome_options.add_argument('ignore-certificate-errors')
         chrome_options.add_argument('ignore-ssl-errors')
         chrome_options.add_argument("--use-fake-ui-for-media-stream")
+        chrome_options.add_argument("--incognito")
 
         # Actually start Chrome, set the window to fullscreen for better recording
         chrome = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install(), options=chrome_options)
