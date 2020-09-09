@@ -29,12 +29,12 @@ class BlackboardMeeting(Meeting):
         button = self.wait_until_found("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", self.duration * 60 * 60)
         time.sleep(randrange(30, 120))  # Wait a bit so we don't instantly join the session the second it exists as that's weird
         try:
-            button.click()
+            button.click()  # Purposefully not using click_if_exists so that it raises an exception if we can't join (mostly because of the class being expired or not yet available)
         except ElementNotInteractableException:
             self.click_if_exists("button[ng-click='launchSessionButton.getLaunchLinkClick()'", 5)
             time.sleep(1)
-            self.click_if_exists("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", 5)  # Purposefully not using click_if_exists so that it raises an exception if we can't join (mostly because of the class being expired or not yet available)
-        time.sleep(0.5)
+            self.click_if_exists("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", 5)  
+            time.sleep(0.5)
         self.chrome.switch_to.window(self.chrome.window_handles[-1])
 
     def __skip_tech_check(self):
