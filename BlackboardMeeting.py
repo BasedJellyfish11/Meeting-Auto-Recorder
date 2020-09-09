@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 from random import randrange
 from Meeting import Meeting
+from selenium.common.exceptions import ElementNotInteractableException
 
 
 class BlackboardMeeting(Meeting):
@@ -25,9 +26,14 @@ class BlackboardMeeting(Meeting):
 
     def __join_session(self):
         # Hits the big "Join Session" button, then switches the active selenium tab to the new one that opens upon clicking said button
-        button = self.wait_until_found("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", self.duration * 60 * 60)  # Purposefully not using click_if_exists so that it raises an exception if we can't join (mostly because of the class being expired or not yet available)
+        button = self.wait_until_found("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", self.duration * 60 * 60)
         time.sleep(randrange(30, 120))  # Wait a bit so we don't instantly join the session the second it exists as that's weird
-        button.click()
+        try:
+            button.click()
+        except ElementNotInteractableException:
+            self.click_if_exists("button[ng-click='launchSessionButton.getLaunchLinkClick()'", 5)
+            time.sleep(1)
+            self.click_if_exists("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", 5)  # Purposefully not using click_if_exists so that it raises an exception if we can't join (mostly because of the class being expired or not yet available)
         time.sleep(0.5)
         self.chrome.switch_to.window(self.chrome.window_handles[-1])
 
