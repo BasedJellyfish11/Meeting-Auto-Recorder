@@ -1,6 +1,7 @@
 import string
 import time
 from datetime import datetime
+from random import randrange
 from Meeting import Meeting
 
 
@@ -18,13 +19,15 @@ class BlackboardMeeting(Meeting):
             raise ValueError("Login failed, or there's no session list!")
 
     def __find_classroom(self, name: string):
-        # Gets the classroom that contains the name given and clicks it.
+        # Gets the classroom that contains the name given and clicks it. If multiple have the same name, the top one will get clicked
         classroom_list = self.chrome.find_elements_by_css_selector("button[ng-click='sessionListItemContent.sessionClicked()']")
         self.find_correct_element(classroom_list, "aria-label", name)
 
     def __join_session(self):
         # Hits the big "Join Session" button, then switches the active selenium tab to the new one that opens upon clicking said button
-        self.wait_until_found("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", 10).click()
+        button = self.wait_until_found("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", self.duration * 60 * 60)  # Purposefully not using click_if_exists so that it raises an exception if we can't join (mostly because of the class being expired or not yet available)
+        time.sleep(randrange(30, 120))  # Wait a bit so we don't instantly join the session the second it exists as that's weird
+        button.click()
         time.sleep(0.5)
         self.chrome.switch_to.window(self.chrome.window_handles[-1])
 

@@ -1,4 +1,5 @@
 import string
+from random import randrange
 from selenium.common.exceptions import NoSuchElementException
 from Meeting import Meeting
 import time
@@ -63,13 +64,18 @@ class TeamsMeeting(Meeting):
         self.click_if_exists("button[ng-click='ctrl.joinCall()']", self.duration * 60 * 60)
 
     def __join_meeting(self):
-        self.click_if_exists("button[ng-click='ctrl.joinMeeting()']", self.duration * 60 * 60)
+        button = self.wait_until_found("button[ng-click='ctrl.joinMeeting()']", self.duration * 60 * 60)
+        time.sleep(randrange(30, 120))  # Wait a bit so we don't instantly join the session the second it exists as that's weird
+        button.click()
 
     def __mute_mic(self):
         self.__toggle_button("#preJoinAudioButton > div > button")
 
     def __disable_camera(self):
         self.__toggle_button("toggle-button[data-tid='toggle-video']>div>button")
+
+    def __open_chat(self):
+        self.click_if_exists("#chat-button", 10)
 
     def __hangup(self):
         self.click_if_exists("#hangup-button", 5)
@@ -82,6 +88,7 @@ class TeamsMeeting(Meeting):
         self.__mute_mic()
         self.__disable_camera()
         self.__join_meeting()
+        self.__open_chat()
 
     def end_meeting(self):
         self.__hangup()
