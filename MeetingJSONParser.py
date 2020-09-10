@@ -60,6 +60,8 @@ class MeetingJSONParser:
     @staticmethod
     def deserialize_blackboard():  # TODO: Same as above
         blackboard_list = []
+        username = None
+        password = None
         with open(Path.cwd().joinpath("JSONs").joinpath("Blackboard Meetings.json"), "r") as file:
             for line in file:
                 if "className" in line:
@@ -70,8 +72,12 @@ class MeetingJSONParser:
                     startTime = datetime.fromisoformat(f"{MeetingJSONParser.get_json_value(line)}")
                 elif "duration" in line:
                     duration = float(MeetingJSONParser.get_json_value(line))
+                elif "username" in line:
+                    username = MeetingJSONParser.get_json_value(line)
+                elif "password" in line:
+                    password = MeetingJSONParser.get_json_value(line)
                 elif "}" in line:
-                    meeting = BlackboardMeeting(startTime, duration, url, className)
+                    meeting = BlackboardMeeting(startTime, duration, url, className, username=username, password=password)
                     blackboard_list.append(meeting)
             file.close()
             return blackboard_list

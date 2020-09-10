@@ -2,22 +2,28 @@ import string
 import time
 from datetime import datetime
 from random import randrange
+from selenium.webdriver.common.keys import Keys
 from Meeting import Meeting
 from selenium.common.exceptions import ElementNotInteractableException
 
 
 class BlackboardMeeting(Meeting):
 
-    def __init__(self, start_time: datetime, duration: float, url: string, class_name: string):
+    def __init__(self, start_time: datetime, duration: float, url: string, class_name: string, username: string = None, password: string = None):
         self.className = class_name
         self.url = url
+        self.username = username
+        self.password = password
         super().__init__(start_time, duration)
 
     def __login(self, url: string):
-        # Blackboard login is as easy as getting the url given lol. Here's hoping the tokens don't expire else this will become a mess
+        # Blackboard login can come in many forms: Through a direct link, through login on another platform that then redirects to blackboard through a token, or through login in blackboard itself. We'll try to cover them all
         self.chrome = self.initialize_chrome(url)
-        if self.wait_until_found("ul[class = 'item-list session-list']", 60*5) is None:
-            raise ValueError("Login failed, or there's no session list!")
+        if self.wait_until_found("ul[class = 'item-list session-list']", 60) is None:  # If it's none, the url itself didn't lead us to the classroom list. Attempt login
+            self.input_keys_in_field_of_type(self.username, "text")  # Find the text field for username. This should cover both email and username fields? I'm only working with username on my end so idk
+            self.input_keys_in_field_of_type(self.password + Keys.ENTER, "password")
+            if self.wait_until_found("ul[class = 'item-list session-list']", 60*5) is None:
+                raise ValueError
 
     def __find_classroom(self, name: string):
         # Gets the classroom that contains the name given and clicks it. If multiple have the same name, the top one will get clicked
