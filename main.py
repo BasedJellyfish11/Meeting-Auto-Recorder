@@ -1,8 +1,12 @@
+import subprocess
 from TeamsMeeting import TeamsMeeting
 from BlackboardMeeting import BlackboardMeeting
 from MeetingJSONParser import MeetingJSONParser
 import time
 import datetime
+from pathlib import Path
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 
 
 def enqueue_next_week_meeting(meeting_list: list, old_meeting):
@@ -22,6 +26,11 @@ meeting_list = MeetingJSONParser.deserialize_teams()
 meeting_list.extend(MeetingJSONParser.deserialize_blackboard())
 meeting_list.sort()
 
+Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+obs_path_object = Path(askopenfilename())
+obs_folder_path = obs_path_object.parent
+
+
 while True:
 
     current_meeting = meeting_list[0]
@@ -38,12 +47,14 @@ while True:
         time.sleep(wait_time.total_seconds())
 
     current_meeting.start_meeting()
+    obs = subprocess.Popen(f"{obs_path_object} --profile \"Clases\" --startrecording -m --collection \"Clases\" --scene \"Scene\"", cwd=obs_folder_path)
 
-    meeting_end_wait = current_meeting.startTime + datetime.timedelta(hours=current_meeting.duration) - datetime.datetime.now()
+    meeting_end_wait = current_meeting.startTime - datetime.datetime.now() + datetime.timedelta(hours=current_meeting.duration)  # Parameter order is a bit weird but PyCharm won't shut up about types otherwise
     print(f"Waiting for {meeting_end_wait.total_seconds()}")
     time.sleep(meeting_end_wait.total_seconds())
 
     current_meeting.end_meeting()
+    obs.kill()
     enqueue_next_week_meeting(meeting_list, current_meeting)
 
 
