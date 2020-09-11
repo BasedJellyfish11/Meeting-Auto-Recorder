@@ -9,12 +9,15 @@ from TeamsMeeting import TeamsMeeting
 
 class MeetingJSONParser:
 
+    blackboard_path = Path(__file__).parent.absolute().joinpath("JSONs").joinpath("Blackboard Meetings.json")
+    teams_path = Path(__file__).parent.absolute().joinpath("JSONs").joinpath("Teams Meetings.json")
+
     @staticmethod
     def serialize_meeting_array(array: list):
 
         # Wipe the files
-        open(Path.cwd().joinpath("JSONs").joinpath("Blackboard Meetings.json"), "w").close()
-        open(Path.cwd().joinpath("JSONs").joinpath("Teams Meetings.json"), "w").close()
+        open(MeetingJSONParser.blackboard_path, "w").close()
+        open(MeetingJSONParser.teams_path, "w").close()
 
         for meeting in array:
             if type(meeting) is BlackboardMeeting:
@@ -24,20 +27,20 @@ class MeetingJSONParser:
 
     @staticmethod
     def serialize_teams(meeting: TeamsMeeting):
-        with open(Path.cwd().joinpath("JSONs").joinpath("Teams Meetings.json"), "a") as file:
+        with open(MeetingJSONParser.teams_path, "a") as file:
             json.dump(meeting.__dict__, file, indent=2, cls=DjangoJSONEncoder)
             file.close()
 
     @staticmethod
     def serialize_blackboard(meeting: BlackboardMeeting):
-        with open(Path.cwd().joinpath("JSONs").joinpath("Blackboard Meetings.json"), "a") as file:
+        with open(MeetingJSONParser.blackboard_path, "a") as file:
             json.dump(meeting.__dict__, file, indent=2, cls=DjangoJSONEncoder)
             file.close()
 
     @staticmethod
     def deserialize_teams():  # TODO: Remember to reformat this when I'm not tired and on a timer because it's ugly
         teams_list = []
-        with open(Path.cwd().joinpath("JSONs").joinpath("Teams Meetings.json"), "r") as file:
+        with open(MeetingJSONParser.teams_path, "r") as file:
             for line in file:
                 if "email" in line:
                     email = MeetingJSONParser.get_json_value(line)
@@ -62,7 +65,7 @@ class MeetingJSONParser:
         blackboard_list = []
         username = None
         password = None
-        with open(Path.cwd().joinpath("JSONs").joinpath("Blackboard Meetings.json"), "r") as file:
+        with open(MeetingJSONParser.blackboard_path, "r") as file:
             for line in file:
                 if "className" in line:
                     className = MeetingJSONParser.get_json_value(line)
