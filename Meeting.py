@@ -9,7 +9,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.utils import ChromeType
-from win32api import GetSystemMetrics
 
 
 #  The purpose of this class was a 12 line class so that we could have both Blackboard and Teams meetings in the same list, order them by start date, then call start_meeting()
@@ -61,7 +60,7 @@ class Meeting(ABC):
 
         # Actually start Chrome, set the window to fullscreen for better recording
         chrome = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install(), options=chrome_options)
-        chrome.set_window_size(GetSystemMetrics(0), GetSystemMetrics(1))
+        chrome.maximize_window()
         chrome.set_window_position(0, 0)
         chrome.get(start_url)
 
