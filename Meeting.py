@@ -57,11 +57,10 @@ class Meeting(ABC):
         chrome_options.add_argument('ignore-ssl-errors')
         chrome_options.add_argument("--use-fake-ui-for-media-stream")
         chrome_options.add_argument("--incognito")
+        chrome_options.add_argument("--start-maximized")
 
         # Actually start Chrome, set the window to fullscreen for better recording
         chrome = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install(), options=chrome_options)
-        chrome.maximize_window()
-        chrome.set_window_position(0, 0)
         chrome.get(start_url)
 
         # Return the webdriver
