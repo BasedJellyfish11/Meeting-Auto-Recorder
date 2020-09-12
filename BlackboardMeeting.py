@@ -39,7 +39,7 @@ class BlackboardMeeting(Meeting):
         except ElementNotInteractableException:
             self.click_if_exists("button[ng-click='launchSessionButton.getLaunchLinkClick()'", 5)
             time.sleep(1)
-            self.click_if_exists("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", 5)  
+            self.click_if_exists("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", 5)
             time.sleep(0.5)
         self.chrome.switch_to.window(self.chrome.window_handles[-1])
 
