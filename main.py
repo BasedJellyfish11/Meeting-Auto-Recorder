@@ -20,7 +20,7 @@ class main:
         meeting_list.remove(old_meeting)
         next_week = old_meeting.startTime + datetime.timedelta(days=7)
         if type(old_meeting) is BlackboardMeeting:
-            new_meeting = BlackboardMeeting(next_week, old_meeting.duration, old_meeting.url, old_meeting.className)
+            new_meeting = BlackboardMeeting(next_week, old_meeting.duration, old_meeting.url, old_meeting.className, username=old_meeting.username, password=old_meeting.password)
         else:
             new_meeting = TeamsMeeting(next_week, old_meeting.duration, old_meeting.teamName, old_meeting.channelName,
                                        old_meeting.email, old_meeting.password)
