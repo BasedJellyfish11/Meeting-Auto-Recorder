@@ -82,6 +82,7 @@ class GUI:
     def __init__(self):
         self.root = Tk()
         self.root.resizable(False, False)
+        self.root.protocol("WM_DELETE_WINDOW", self.exit)
         self.root.title("Meeting auto recorder")
 
         self.obs_path = None
@@ -118,11 +119,15 @@ class GUI:
         self.start_button.config(state="normal")
 
     def start(self):
-        main.stop.set()  # stop the previous one instead of having 80 threads executing
-        time.sleep(0.1)  # Race condition lol. Essentially, we don't wanna have the thread stop blocking because it was set, but then evaluate the if(set)return as not set.
-        # If my concurrency teachers saw me avoid a race condition with a sleep they'd kill me I am so sorry guys. I just really do not value the responsiveness of the button highly at all
         main.stop.clear()
+        self.start_button.config(text="Running!", command=self.stop)
         threading.Thread(target=main.main_loop, args=(self.obs_path, self.obs_profile.get(), self.obs_collection.get(), self.obs_scene.get())).start()
+
+    def stop(self):
+        main.stop.set()
+        time.sleep(0.1)  # Makes sure the main thread stops correctly. If my concurrency teachers saw me solving race conditions like these with sleeps they'd kill me I am so sorry.
+                         # I just don't think GUI responsiveness is a priority at all, and the 0.1 doesn't make it unresponsive anyway
+        self.start_button.config(text="Start", command=self.start)
 
     @staticmethod
     def exit():
