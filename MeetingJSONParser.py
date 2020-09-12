@@ -1,7 +1,6 @@
 from datetime import datetime
 import json
 import string
-from django.core.serializers.json import DjangoJSONEncoder
 from pathlib import Path
 from BlackboardMeeting import BlackboardMeeting
 from TeamsMeeting import TeamsMeeting
@@ -11,6 +10,12 @@ class MeetingJSONParser:
 
     blackboard_path = Path(__file__).parent.absolute().joinpath("JSONs").joinpath("Blackboard Meetings.json")
     teams_path = Path(__file__).parent.absolute().joinpath("JSONs").joinpath("Teams Meetings.json")
+
+    @staticmethod
+    def serialize_datetime(to_serialize: datetime):
+        if isinstance(to_serialize, datetime):
+            return to_serialize.isoformat()
+        return to_serialize.__str__()  # Honestly maybe this should just throw but idk, just in case you get me?
 
     @staticmethod
     def serialize_meeting_array(array: list):
@@ -28,13 +33,13 @@ class MeetingJSONParser:
     @staticmethod
     def serialize_teams(meeting: TeamsMeeting):
         with open(MeetingJSONParser.teams_path, "a") as file:
-            json.dump(meeting.__dict__, file, indent=2, cls=DjangoJSONEncoder)
+            json.dump(meeting.__dict__, file, indent=2, default=MeetingJSONParser.serialize_datetime)
             file.close()
 
     @staticmethod
     def serialize_blackboard(meeting: BlackboardMeeting):
         with open(MeetingJSONParser.blackboard_path, "a") as file:
-            json.dump(meeting.__dict__, file, indent=2, cls=DjangoJSONEncoder)
+            json.dump(meeting.__dict__, file, indent=2, default=MeetingJSONParser.serialize_datetime)
             file.close()
 
     @staticmethod

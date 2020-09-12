@@ -1,3 +1,4 @@
+import os
 import subprocess
 from TeamsMeeting import TeamsMeeting
 from BlackboardMeeting import BlackboardMeeting
@@ -6,7 +7,7 @@ import time
 import datetime
 import threading
 from pathlib import Path
-from tkinter import W, E, Label, Button, Entry, END, Tk, StringVar
+from tkinter import W, E, Label, Button, Entry, END, Tk, StringVar, PhotoImage
 from tkinter.filedialog import askopenfilename, sys
 
 
@@ -79,11 +80,18 @@ class main:
 
 class GUI:
 
+    @staticmethod
+    def resource_path(relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_path, relative_path)
+
     def __init__(self):
         self.root = Tk()
         self.root.resizable(False, False)
         self.root.protocol("WM_DELETE_WINDOW", self.exit)
         self.root.title("Meeting auto recorder")
+        self.root.iconphoto(True, PhotoImage(file=GUI.resource_path("icon.png")))
 
         self.obs_path = None
         self.obs_profile = StringVar()
@@ -99,7 +107,7 @@ class GUI:
         Entry(self.root, textvariable=self.obs_collection).grid(sticky=W + E, row=3, columnspan=2, padx=10, pady=2)
 
         Label(self.root, text="OBS Scene name").grid(sticky=W + E, row=4, column=0, columnspan=2, padx=0, pady=(8, 0))
-        Entry(self.root, textvariable=self.obs_scene).grid(sticky = W + E, row = 5, columnspan = 2, padx = 10, pady = 2)
+        Entry(self.root, textvariable=self.obs_scene).grid(sticky=W + E, row=5, columnspan=2, padx=10, pady=2)
 
         Label(self.root, text="OBS Profile name").grid(sticky=W + E, row=6, column=0, columnspan=2, padx=0, pady=(8, 0))
         Entry(self.root, textvariable=self.obs_profile).grid(sticky=W + E, row=7, columnspan=2, padx=10, pady=2)
