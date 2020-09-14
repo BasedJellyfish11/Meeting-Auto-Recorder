@@ -37,7 +37,7 @@ class TeamsMeeting(Meeting):
         self.click_if_exists(".use-app-lnk", 10)  # Ignore the use app thing because it's stupid (and because automating it is harder than Selenium)
 
         time.sleep(1)
-        self.click_if_exists("button.app-bar-link > ng-include > svg.icons-teams", 5)
+        self.click_if_exists("button.app-bar-link > ng-include > svg.icons-teams", 5)  # Display current teams
 
         if self.wait_until_found("div[data-tid='team-channel-list']", 60 * 5) is None:
             raise ValueError("Login seems to have failed, as there's no teams list to be found (or is teams in not list mode?)")
@@ -53,9 +53,9 @@ class TeamsMeeting(Meeting):
         try:
             channels = team.find_element_by_class_name("channels").find_elements_by_css_selector("ul[role='group']>ng-include>li[role='treeitem']")
         except NoSuchElementException:  # If it isn't found it's possible we clicked the team when it was already expanded, and collapsed the channel list
-            team.click()
+            team.click()  # Click it again to tet that theory
             time.sleep(1)
-            channels = team.find_element_by_class_name("channels").find_elements_by_css_selector("ul[role='group']>ng-include>li[role='treeitem']")
+            channels = team.find_element_by_class_name("channels").find_elements_by_css_selector("ul[role='group']>ng-include>li[role='treeitem']")  # Then try to get them again
 
         # Return and click the good one
         return self.find_correct_element(channels, "data-tid", channel_name)
@@ -98,5 +98,3 @@ class TeamsMeeting(Meeting):
         button = self.wait_until_found(selector, 15)
         if button is not None and button.get_attribute("aria-pressed") == "true":
             button.click()
-
-

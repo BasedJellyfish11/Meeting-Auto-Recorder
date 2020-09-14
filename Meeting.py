@@ -53,13 +53,13 @@ class Meeting(ABC):
 
         # Chrome because Firefox gives me issues with audio in teams apparently? Bruh
         chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('ignore-certificate-errors')
-        chrome_options.add_argument('ignore-ssl-errors')
-        chrome_options.add_argument("--use-fake-ui-for-media-stream")
-        chrome_options.add_argument("--incognito")
-        chrome_options.add_argument("--start-maximized")
+        chrome_options.add_argument('ignore-certificate-errors')  # I do not know what this truly does honestly but everyone and their mothers uses them with selenium so I'm not gonna be less than them
+        chrome_options.add_argument('ignore-ssl-errors')  # Same as above
+        chrome_options.add_argument("--use-fake-ui-for-media-stream")  # Confirm microphone, webcam, etc requests automatically so they're not just hanging around or disallow us from joining stuff (like in blackboard)
+        chrome_options.add_argument("--incognito")   # Don't want this in my history tbh I didn't actually browse it
+        chrome_options.add_argument("--start-maximized")  # Better recording quality if the browser is maximized rather than resized in OBS
 
-        # Actually start Chrome, set the window to fullscreen for better recording
+        # Actually start Chrome, navigate to the given url
         chrome = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install(), options=chrome_options)
         chrome.get(start_url)
 
@@ -67,8 +67,8 @@ class Meeting(ABC):
         return chrome
 
     def wait_until_found(self, element: string, timeout: float):
+        """A utility method for selenium to wait for logins / page loads etc."""
 
-        # A utility method for selenium to wait for logins / page loads etc.
         try:
             element_present = EC.visibility_of_element_located((By.CSS_SELECTOR, element))
             WebDriverWait(self.chrome, timeout).until(element_present)
@@ -79,20 +79,23 @@ class Meeting(ABC):
             return None
 
     def input_keys_in_field_of_type(self, keys: string, field_type: string):
-        field = self.wait_until_found(f"input[type= '{field_type}']", 30)
+        """A utility method that looks for a field of the given type and inputs in it"""
+        field = self.wait_until_found(f"input[type= '{field_type}']", 30)  # Honestly the timeout maybe should be configurable too, idk
         if field is not None:
             field.send_keys(keys)
             time.sleep(1)
         else:
-            raise ValueError(f"The field {field_type} wasn't found")
+            raise ValueError(f"The field {field_type} wasn't found")  # If the field isn't found it's a big problem so except
 
     def click_if_exists(self, selector: string, wait):
+        """Waits for a given element and clicks it if it exists"""
         element = self.wait_until_found(selector, wait)
         if element is not None:
             element.click()
 
     @staticmethod
-    def find_correct_element(array, attribute_to_get: string ,name_to_find: string):
+    def find_correct_element(array, attribute_to_get: string, name_to_find: string):
+        """Given a list of css elements, goes through them and clicks/returns the correct one based on the value of the attribute name given"""
         for element in array:
             if name_to_find.lower() in element.get_attribute(attribute_to_get).lower():
                 element.click()

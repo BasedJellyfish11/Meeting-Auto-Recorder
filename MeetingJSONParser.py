@@ -43,10 +43,10 @@ class MeetingJSONParser:
             file.close()
 
     @staticmethod
-    def deserialize_teams():  # TODO: Remember to reformat this when I'm not tired and on a timer because it's ugly
+    def deserialize_teams():  # TODO: Remember to reformat this when I'm not tired and on a timer because it's ugly. Python not having a switch is so annoying though like I need a full blown dict why
         teams_list = []
         with open(MeetingJSONParser.teams_path, "r") as file:
-            for line in file:
+            for line in file:  # My lord just give me a switch statement python why
                 if "email" in line:
                     email = MeetingJSONParser.get_json_value(line)
                 elif "password" in line:
@@ -62,11 +62,11 @@ class MeetingJSONParser:
                 elif "}" in line:
                     meeting = TeamsMeeting(startTime, duration, teamName, channelName, email, password)
                     teams_list.append(meeting)
-            file.close()
+            file.close()  # I think with open makes this irrelevant but still a good practice
         return teams_list
 
     @staticmethod
-    def deserialize_blackboard():  # TODO: Same as above
+    def deserialize_blackboard():  # TODO: Same as above function
         blackboard_list = []
         username = None
         password = None
@@ -97,7 +97,9 @@ class MeetingJSONParser:
         for(ind, character) in enumerate(value):
             if character == ':' and not trimmed_start:
                 return_value = return_value[ind+1:]
-                trimmed_start = True
+                trimmed_start = True  # Yeet the part that states what field this particular string is
 
-        return_value = return_value.strip(" \"\n,")
+        return_value = return_value.strip(" \"\n,")  # Trim the bad characters start/end characters
+        if return_value == "null":
+            return None
         return return_value

@@ -37,11 +37,11 @@ class BlackboardMeeting(Meeting):
         try:
             button.click()  # Purposefully not using click_if_exists so that it raises an exception if we can't join (mostly because of the class being expired or not yet available)
         except ElementNotInteractableException:
-            self.click_if_exists("button[ng-click='launchSessionButton.getLaunchLinkClick()'", 5)
+            self.click_if_exists("button[ng-click='launchSessionButton.getLaunchLinkClick()'", 5)  # The blackboard join button expires for some reason (I swear this page is more security oriented than my bank dude). When it expires, the button changed to a "get new safe link" one which we have to click
             time.sleep(1)
-            self.click_if_exists("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", 5)
+            self.click_if_exists("bb-loading-button[on-click='launchSessionButton.launchSessionClicked()']", 5)  # Click the join button for good
             time.sleep(0.5)
-        self.chrome.switch_to.window(self.chrome.window_handles[-1])
+        self.chrome.switch_to.window(self.chrome.window_handles[-1])  # Blackboard launches sessions on a new window, and that's the one we need selenium to automate now
 
     def __skip_tech_check(self):
         # Skips the audio test
@@ -54,7 +54,7 @@ class BlackboardMeeting(Meeting):
     def __open_chat(self):
         self.click_if_exists("#side-panel-open", 60)
         self.click_if_exists("bb-channel-list-item[channel='channelSelector.getEveryoneChannel()']", 60)
-        self.click_if_exists("button[analytics-id='guidance.chat-input.chat-input-focus-action']", 60)
+        self.click_if_exists("button[analytics-id='guidance.chat-input.chat-input-focus-action']", 60)  # Yo even the chat has a tutorial please just leave me alone I'm not as stupid as you think Blackboard
 
     def start_meeting(self):
         self.__login(self.url)
@@ -65,4 +65,4 @@ class BlackboardMeeting(Meeting):
         self.__open_chat()
 
     def end_meeting(self):
-        self.chrome.quit()
+        self.chrome.quit()  # Blackboard has no hangup or leave button? You just close the window? This is wild?
