@@ -76,6 +76,7 @@ class TeamsMeeting(Meeting):
 
     def __open_chat(self):
         self.click_if_exists("#chat-button", 10)
+        self.click_if_exists("button[title='Dismiss']", 10)
 
     def __hangup(self):
         self.click_if_exists("#hangup-button", 5)

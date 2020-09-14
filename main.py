@@ -128,12 +128,12 @@ class GUI:
 
     def __browsefunc(self):
         """Allows the user to find a path, displays it on the pathlabel, then enables the start button"""
-        self.obs_path = askopenfilename()
+        self.obs_path = Path(askopenfilename())
         self.pathlabel.config(state="normal")
         self.pathlabel.delete(0, END)  # These two are what displays it on the pathlabel
         self.pathlabel.insert(0, self.obs_path)
         self.pathlabel.config(state="readonly")
-        if self.obs_path != "":  # Nothing was selected
+        if self.obs_path != Path("."):  # Nothing was selected
             self.start_button.config(state="normal")
         else:
             self.start_button.config(state="disabled")

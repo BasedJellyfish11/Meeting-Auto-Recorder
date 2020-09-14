@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 import string
+import sys
 from pathlib import Path
 from BlackboardMeeting import BlackboardMeeting
 from TeamsMeeting import TeamsMeeting
@@ -8,8 +9,13 @@ from TeamsMeeting import TeamsMeeting
 
 class MeetingJSONParser:
 
-    blackboard_path = Path(__file__).parent.absolute().joinpath("JSONs").joinpath("Blackboard Meetings.json")
-    teams_path = Path(__file__).parent.absolute().joinpath("JSONs").joinpath("Teams Meetings.json")
+    if getattr(sys, 'frozen', False):  # Pyinstaller --onefile support.
+        blackboard_path = Path(sys.executable).parent.absolute().joinpath("JSONs").joinpath("Blackboard Meetings.json")
+        teams_path = Path(sys.executable).parent.absolute().joinpath("JSONs").joinpath("Teams Meetings.json")
+    else:
+        blackboard_path = Path(__file__).parent.absolute().joinpath("JSONs").joinpath("Blackboard Meetings.json")
+        teams_path = Path(__file__).parent.absolute().joinpath("JSONs").joinpath("Teams Meetings.json")
+        
 
     @staticmethod
     def serialize_datetime(to_serialize: datetime):
