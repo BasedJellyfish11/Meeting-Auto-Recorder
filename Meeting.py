@@ -56,7 +56,7 @@ class Meeting(ABC):
         chrome_options.add_argument('ignore-certificate-errors')  # I do not know what this truly does honestly but everyone and their mothers uses them with selenium so I'm not gonna be less than them
         chrome_options.add_argument('ignore-ssl-errors')  # Same as above
         chrome_options.add_argument("--use-fake-ui-for-media-stream")  # Confirm microphone, webcam, etc requests automatically so they're not just hanging around or disallow us from joining stuff (like in blackboard)
-        chrome_options.add_argument("--incognito")   # Don't want this in my history tbh I didn't actually browse it
+        # chrome_options.add_argument("--incognito")   # Don't want this in my history tbh I didn't actually browse it - Newest Chrome update makes third party cookies an issue in incognito
         chrome_options.add_argument("--start-maximized")  # Better recording quality if the browser is maximized rather than resized in OBS
 
         # Actually start Chrome, navigate to the given url
